@@ -35,6 +35,10 @@ const Metrics = () => {
   const dispatch = useDispatch();
   const { available } = useSelector(getMetrics);
 
+  const chosenMetricsChanged = (chosenMetrics: string[]) => {
+    dispatch(actions.metricsChosen({ chosenMetrics }));
+  };
+
   const [result] = useQuery({
     query,
   });
@@ -50,5 +54,5 @@ const Metrics = () => {
 
   if (fetching) return <LinearProgress />;
 
-  return <Select options={available} label="Tracked Metrics" />;
+  return <Select options={available} label="Tracked Metrics" onChosenChange={chosenMetricsChanged} />;
 };

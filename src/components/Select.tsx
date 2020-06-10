@@ -5,18 +5,25 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 
+type OnChangeCallBack = (event: any) => void;
+
 type SelectProps = {
   options: Array<string>;
   label: string;
+  onChosenChange: OnChangeCallBack;
 };
 
-export default ({ options, label }: SelectProps) => {
+export default ({ options, label, onChosenChange }: SelectProps) => {
   const [chosen, setChosen] = React.useState([]);
 
   // TODO: event: React.ChangeEvent<HTMLInputSelect> not supported by MUI https://github.com/mui-org/material-ui/issues/15400
   const handleChange = (event: any) => {
     setChosen(event.target.value);
+    if (onChosenChange) {
+      onChosenChange(event.target.value);
+    }
   };
+
   return (
     <FormControl>
       <InputLabel id={label}>{label}</InputLabel>
