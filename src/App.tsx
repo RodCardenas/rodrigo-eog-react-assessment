@@ -2,13 +2,14 @@ import React from 'react';
 import createStore from './store';
 import { Provider } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
+import { Provider as UrqlProvider } from 'urql';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import 'react-toastify/dist/ReactToastify.css';
 import Header from './components/Header';
 import Wrapper from './components/Wrapper';
-import NowWhat from './components/NowWhat';
-import Metrics from './Features/Metrics/Metrics';
+import Dashboard from './components/Dashboard';
+import { client, subscriptionClient } from './clients';
 
 const store = createStore();
 const theme = createMuiTheme({
@@ -30,10 +31,11 @@ const App = () => (
     <CssBaseline />
     <Provider store={store}>
       <Wrapper>
-        <Header />
-        <NowWhat />
-        <Metrics />
-        <ToastContainer />
+        <UrqlProvider value={client}>
+          <Header />
+          <Dashboard />
+          <ToastContainer />
+        </UrqlProvider>
       </Wrapper>
     </Provider>
   </MuiThemeProvider>
