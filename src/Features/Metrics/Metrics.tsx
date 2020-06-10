@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { actions } from './reducer';
 import { Provider, createClient, useQuery } from 'urql';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Select from '../../components/Select';
 import { IState } from '../../store';
 
 const client = createClient({
@@ -49,11 +50,5 @@ const Metrics = () => {
 
   if (fetching) return <LinearProgress />;
 
-  return (
-    <>
-      {available.map(m => {
-        return <div>{m}</div>;
-      })}
-    </>
-  );
+  return <Select options={available} label="Tracked Metrics" />;
 };

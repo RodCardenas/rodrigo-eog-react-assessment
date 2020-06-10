@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from 'redux-starter-kit';
 
 export type GetMetrics = {
-  getMetrics: [string];
+  getMetrics: string[];
 };
 
 export type ApiErrorAction = {
