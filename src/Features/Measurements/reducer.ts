@@ -30,9 +30,11 @@ const slice = createSlice({
     measurementReceived: (state, action: PayloadAction<Measurement>) => {
       const { metric, at, value, unit } = action.payload;
       state[metric] = state[metric] || [];
-      if (state[metric].length > chartingLimit) {
-        state[metric] = state[metric].slice(0, chartingLimit);
-      } else if (state[metric].length <= chartingLimit) {
+      const dataPoints = state[metric].length;
+      const dataPointsToLimit = chartingLimit - dataPoints;
+      if (dataPointsToLimit < 0) {
+        state[metric] = state[metric].slice(dataPoints - chartingLimit);
+      } else if (dataPointsToLimit >= 0) {
         state[metric].shift();
       }
       state[metric].push({ at, value, unit });
