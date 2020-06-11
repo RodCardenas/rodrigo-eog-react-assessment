@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from './reducer';
 import { useSubscription, useQuery } from 'urql';
+import Grid from '@material-ui/core/Grid';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { IState } from '../../store';
 import LineGraph from '../../components/LineGraph';
+import ReadOut from '../../components/ReadOut';
 
 const newMeasurement = `
 subscription {
@@ -77,11 +79,18 @@ export default () => {
   }
 
   return (
-    <LineGraph
-      measurements={measurements}
-      chosenMetrics={chosenMetrics}
-      isPaused={isSubscriptionPaused}
-      pause={setIsSubscriptionPaused}
-    />
+    <Grid container>
+      <Grid item xs>
+        <LineGraph
+          measurements={measurements}
+          chosenMetrics={chosenMetrics}
+          isPaused={isSubscriptionPaused}
+          pause={setIsSubscriptionPaused}
+        />
+      </Grid>
+      {chosenMetrics.map(metric => {
+        return <ReadOut measurement={measurements[metric][measurements[metric].length - 1]} metricName={metric} />;
+      })}
+    </Grid>
   );
 };

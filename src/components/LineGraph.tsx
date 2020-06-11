@@ -51,12 +51,11 @@ const getTraces = (measurements: { [metricName: string]: Array<MeasurementData> 
 export default ({ measurements, chosenMetrics, isPaused, pause }: LineGraphProps) => {
   const classes = useStyles();
   const graphContainerRef = useRef<HTMLDivElement>(null);
-  const graphLegendRef = useRef<HTMLDivElement>(null);
   let graph: Dygraph;
 
   React.useEffect(() => {
     const populateGraph = () => {
-      if (null !== graphContainerRef.current && null !== graphLegendRef.current) {
+      if (null !== graphContainerRef.current) {
         let data = getTraces(measurements, chosenMetrics);
         if (graph) {
           //update
@@ -67,8 +66,6 @@ export default ({ measurements, chosenMetrics, isPaused, pause }: LineGraphProps
           // create
           if (data.length > 0) {
             graph = new Dygraph(graphContainerRef.current, data, {
-              legend: 'always',
-              labelsDiv: graphLegendRef.current,
               labels: ['Date', ...chosenMetrics],
             });
           }
@@ -90,7 +87,6 @@ export default ({ measurements, chosenMetrics, isPaused, pause }: LineGraphProps
           <CardContent>
             <div className={classes.graphContainer} ref={graphContainerRef} />
           </CardContent>
-          <CardContent ref={graphLegendRef} />
           <CardActions>
             <IconButton color="primary" onClick={() => pause(!isPaused)}>
               {isPaused ? <PlayCircleOutlineIcon /> : <PauseCircleOutlineIcon />}
