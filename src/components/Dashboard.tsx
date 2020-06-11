@@ -11,10 +11,12 @@ export default () => {
       </Grid>
 
       <Grid item xs>
+        Metrics
         <Metrics />
       </Grid>
 
       <Grid item xs>
+        Measurements
         <Measurements />
       </Grid>
     </Grid>

@@ -19,6 +19,8 @@ export type ApiErrorAction = {
 
 const initialState: { [metric: string]: MeasurementData[] } = {};
 
+const chartingLimit = (30 * 60) / 1.3;
+
 const slice = createSlice({
   name: 'measurements',
   initialState,
@@ -26,7 +28,11 @@ const slice = createSlice({
     measurementReceived: (state, action: PayloadAction<Measurement>) => {
       const { metric, at, value, unit } = action.payload;
       state[metric] = state[metric] || [];
-      state[metric].push({ at, value, unit });
+
+      if (state[metric].length >= chartingLimit) {
+        state[metric].pop();
+      }
+      state[metric].unshift({ at, value, unit });
     },
     measurementApiErrorReceived: (state, action: PayloadAction<ApiErrorAction>) => state,
   },
