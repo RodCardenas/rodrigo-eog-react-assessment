@@ -26,7 +26,6 @@ query($input: [MeasurementQuery]) {
     measurements {
       at
       value
-      metric
       unit
     }
   }
@@ -79,7 +78,7 @@ export default () => {
   }
 
   return (
-    <Grid container>
+    <Grid container direction="column" justify="center" alignItems="center" spacing={4}>
       <Grid item xs>
         <LineGraph
           measurements={measurements}
@@ -88,9 +87,15 @@ export default () => {
           pause={setIsSubscriptionPaused}
         />
       </Grid>
-      {chosenMetrics.map(metric => {
-        return <ReadOut measurement={measurements[metric][measurements[metric].length - 1]} metricName={metric} />;
-      })}
+      <Grid container direction="row" alignItems="center" spacing={2} item xs>
+        {chosenMetrics.map(metric => {
+          return (
+            <Grid item xs={2} key={metric}>
+              <ReadOut measurement={measurements[metric][measurements[metric].length - 1]} metricName={metric} />
+            </Grid>
+          );
+        })}
+      </Grid>
     </Grid>
   );
 };

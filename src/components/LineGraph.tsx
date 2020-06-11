@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
@@ -28,7 +28,9 @@ type LineGraphProps = {
 };
 
 const getTraces = (measurements: { [metricName: string]: Array<MeasurementData> }, metrics: Array<string>) => {
-  const activeTraces = Object.keys(measurements).filter(metricName => metrics.includes(metricName));
+  const activeTraces = Object.keys(measurements)
+    .filter(metricName => metrics.includes(metricName))
+    .sort();
 
   const formattedData: any[] = [];
   activeTraces.forEach((metric, metricIdx) => {
@@ -48,34 +50,57 @@ const getTraces = (measurements: { [metricName: string]: Array<MeasurementData> 
   return formattedData;
 };
 
+const setAxes = (metrics: Array<string>) => {
+  const series: { [metric: string]: { [metric: string]: string } } = {};
+  const sortedMetrics = metrics.slice().sort();
+  sortedMetrics.forEach(metric => {
+    if (metric.includes('Temp')) {
+      series[metric] = { axis: 'y1' };
+    } else {
+      series[metric] = { axis: 'y2' };
+    }
+  });
+
+  return series;
+};
+
 export default ({ measurements, chosenMetrics, isPaused, pause }: LineGraphProps) => {
   const classes = useStyles();
+  const [graph, setGraph] = useState<any>(null);
   const graphContainerRef = useRef<HTMLDivElement>(null);
-  let graph: Dygraph;
 
   React.useEffect(() => {
     const populateGraph = () => {
       if (null !== graphContainerRef.current) {
-        let data = getTraces(measurements, chosenMetrics);
-        if (graph) {
-          //update
-          graph.updateOptions({
-            file: data,
-          });
-        } else {
+        const data = getTraces(measurements, chosenMetrics);
+        const series = setAxes(chosenMetrics);
+
+        if (null === graph) {
           // create
           if (data.length > 0) {
-            graph = new Dygraph(graphContainerRef.current, data, {
+            const g = new Dygraph(graphContainerRef.current, data, {
               labels: ['Date', ...chosenMetrics],
+              series,
             });
+            setGraph(g);
           }
+        } else {
+          //update
+          console.log('updating');
+
+          graph.updateOptions({
+            file: data,
+            labels: ['Date', ...chosenMetrics],
+            series,
+          });
+          setGraph(graph);
         }
       }
     };
     if (graphContainerRef.current) {
       populateGraph();
     }
-  }, [graphContainerRef, measurements, chosenMetrics]);
+  }, [graphContainerRef, measurements, chosenMetrics, graph]);
 
   return (
     <Card>

@@ -4,12 +4,13 @@ export type Measurement = {
   metric: string;
   at: number;
   value: number;
-  unit?: string;
+  unit: string;
 };
 
 export type MeasurementData = {
   at: number;
   value: number;
+  unit: string;
 };
 
 export type MeasurementsGroup = [{ measurements: MeasurementData[]; metric: string }];
@@ -27,12 +28,14 @@ const slice = createSlice({
   initialState,
   reducers: {
     measurementReceived: (state, action: PayloadAction<Measurement>) => {
-      const { metric, at, value } = action.payload;
+      const { metric, at, value, unit } = action.payload;
       state[metric] = state[metric] || [];
-      if (state[metric].length >= chartingLimit) {
+      if (state[metric].length > chartingLimit) {
+        state[metric] = state[metric].slice(0, chartingLimit);
+      } else if (state[metric].length <= chartingLimit) {
         state[metric].shift();
       }
-      state[metric].push({ at, value });
+      state[metric].push({ at, value, unit });
     },
     multipleMeasurementsReceived: (state, action: PayloadAction<MeasurementsGroup>) => {
       const measurements = action.payload;

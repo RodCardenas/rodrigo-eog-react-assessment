@@ -17,7 +17,7 @@ export default () => {
   return (
     <Grid container direction="column" justify="center" alignItems="center" spacing={8}>
       <Grid item xs className={classes.title}>
-        <Typography variant="h3">Dashboard</Typography>
+        <Typography variant="h5">Dashboard</Typography>
       </Grid>
 
       <Grid item xs>
