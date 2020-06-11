@@ -7,11 +7,7 @@ export type Measurement = {
   unit: string;
 };
 
-export type MeasurementData = {
-  at: number;
-  value: number;
-  unit: string;
-};
+export type MeasurementData = (Date | number)[];
 
 export type ApiErrorAction = {
   error: string;
@@ -30,9 +26,9 @@ const slice = createSlice({
       state[metric] = state[metric] || [];
 
       if (state[metric].length >= chartingLimit) {
-        state[metric].pop();
+        state[metric].shift();
       }
-      state[metric].unshift({ at, value, unit });
+      state[metric].push([new Date(at), value]);
     },
     measurementApiErrorReceived: (state, action: PayloadAction<ApiErrorAction>) => state,
   },
