@@ -50,20 +50,6 @@ const getTraces = (measurements: { [metricName: string]: Array<MeasurementData> 
   return formattedData;
 };
 
-const setAxes = (metrics: Array<string>) => {
-  const series: { [metric: string]: { [metric: string]: string } } = {};
-  const sortedMetrics = metrics.slice().sort();
-  sortedMetrics.forEach(metric => {
-    if (metric.includes('Temp')) {
-      series[metric] = { axis: 'y1' };
-    } else {
-      series[metric] = { axis: 'y2' };
-    }
-  });
-
-  return series;
-};
-
 export default ({ measurements, chosenMetrics, isPaused, pause }: LineGraphProps) => {
   const classes = useStyles();
   const [graph, setGraph] = useState<any>(null);
@@ -73,25 +59,20 @@ export default ({ measurements, chosenMetrics, isPaused, pause }: LineGraphProps
     const populateGraph = () => {
       if (null !== graphContainerRef.current) {
         const data = getTraces(measurements, chosenMetrics);
-        const series = setAxes(chosenMetrics);
 
         if (null === graph) {
           // create
           if (data.length > 0) {
             const g = new Dygraph(graphContainerRef.current, data, {
               labels: ['Date', ...chosenMetrics],
-              series,
             });
             setGraph(g);
           }
         } else {
           //update
-          console.log('updating');
-
           graph.updateOptions({
             file: data,
             labels: ['Date', ...chosenMetrics],
-            series,
           });
           setGraph(graph);
         }
@@ -102,6 +83,10 @@ export default ({ measurements, chosenMetrics, isPaused, pause }: LineGraphProps
     }
   }, [graphContainerRef, measurements, chosenMetrics, graph]);
 
+  if (chosenMetrics.length === 0 && graph) {
+    graph.destroy();
+    setGraph(null);
+  }
   return (
     <Card>
       <CardHeader title="Metrics" />
