@@ -4,10 +4,15 @@ export type Measurement = {
   metric: string;
   at: number;
   value: number;
-  unit: string;
+  unit?: string;
 };
 
-export type MeasurementData = (Date | number)[];
+export type MeasurementData = {
+  at: number;
+  value: number;
+};
+
+export type MeasurementsGroup = [{ measurements: MeasurementData[]; metric: string }];
 
 export type ApiErrorAction = {
   error: string;
@@ -15,7 +20,7 @@ export type ApiErrorAction = {
 
 const initialState: { [metric: string]: MeasurementData[] } = {};
 
-const chartingLimit = (30 * 60) / 1.3;
+const chartingLimit = (5 * 60) / 1.3;
 
 const slice = createSlice({
   name: 'measurements',
@@ -28,7 +33,16 @@ const slice = createSlice({
       if (state[metric].length >= chartingLimit) {
         state[metric].shift();
       }
-      state[metric].push([new Date(at), value]);
+      state[metric].push({ at, value });
+    },
+    multipleMeasurementsReceived: (state, action: PayloadAction<MeasurementsGroup>) => {
+      const measurements = action.payload;
+      console.log(measurements);
+
+      for (let i = 0; i < measurements.length; i++) {
+        let group = measurements[i];
+        state[group.metric] = group.measurements;
+      }
     },
     measurementApiErrorReceived: (state, action: PayloadAction<ApiErrorAction>) => state,
   },

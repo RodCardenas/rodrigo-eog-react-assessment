@@ -31,6 +31,7 @@ export default () => {
     query,
   });
   const { fetching, data, error } = result;
+
   useEffect(() => {
     if (error) {
       dispatch(actions.metricsApiErrorReceived({ error: error.message }));
