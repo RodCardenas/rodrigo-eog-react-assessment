@@ -73,9 +73,6 @@ export default () => {
   }, [dispatch, multipleMeasurementsResult]);
 
   if (!data && fetching) return <LinearProgress />;
-  if (error) {
-    console.log(`Oh no! Error: ${error}`);
-  }
 
   return (
     <Grid container direction="column" justify="center" alignItems="center" spacing={4}>
