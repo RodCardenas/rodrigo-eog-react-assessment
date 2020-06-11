@@ -23,11 +23,11 @@ const slice = createSlice({
   reducers: {
     metricsRecevied: (state, action: PayloadAction<GetMetrics>) => {
       const { getMetrics } = action.payload;
-      state.available = getMetrics;
+      state.available = getMetrics.sort();
     },
     metricsChosen: (state, action: PayloadAction<ChosenMetrics>) => {
       const { chosenMetrics } = action.payload;
-      state.chosen = chosenMetrics;
+      state.chosen = chosenMetrics.sort();
     },
     metricsApiErrorReceived: (state, action: PayloadAction<ApiErrorAction>) => state,
   },

@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions } from './reducer';
 import { useSubscription, useQuery } from 'urql';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { Measurement } from './reducer';
 import { IState } from '../../store';
 import LineGraph from '../../components/LineGraph';
 
@@ -45,8 +44,9 @@ export default () => {
   const dispatch = useDispatch();
   const measurements = useSelector(getMeasurements);
   const chosenMetrics = useSelector(getChosenMetrics);
+  const [isSubscriptionPaused, setIsSubscriptionPaused] = useState(false);
 
-  const [{ fetching, data, error }] = useSubscription({ query: newMeasurement });
+  const [{ fetching, data, error }] = useSubscription({ query: newMeasurement, pause: isSubscriptionPaused });
   const [multipleMeasurementsResult] = useQuery({
     query: getMultipleMeasurements,
     variables: {
@@ -69,12 +69,19 @@ export default () => {
     const { data } = multipleMeasurementsResult;
     if (!data) return;
     dispatch(actions.multipleMeasurementsReceived(data.getMultipleMeasurements));
-  }, [multipleMeasurementsResult]);
+  }, [dispatch, multipleMeasurementsResult]);
 
   if (!data && fetching) return <LinearProgress />;
   if (error) {
     console.log(`Oh no! Error: ${error}`);
   }
 
-  return <LineGraph measurements={measurements} chosenMetrics={chosenMetrics} />;
+  return (
+    <LineGraph
+      measurements={measurements}
+      chosenMetrics={chosenMetrics}
+      isPaused={isSubscriptionPaused}
+      pause={setIsSubscriptionPaused}
+    />
+  );
 };

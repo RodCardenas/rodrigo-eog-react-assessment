@@ -9,7 +9,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import Header from './components/Header';
 import Wrapper from './components/Wrapper';
 import Dashboard from './components/Dashboard';
+/*eslint-disable @typescript-eslint/no-unused-vars*/
 import { client, subscriptionClient } from './clients';
+/*eslint-enable @typescript-eslint/no-unused-vars*/
 
 const store = createStore();
 const theme = createMuiTheme({
